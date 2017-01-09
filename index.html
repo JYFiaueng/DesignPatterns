@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,user-scalable=no"> -->
+	<title>常用设计模式小结</title>
+	<style>
+		body{font-family: 'Consolas';}
+		*{margin: 0;padding: 0;}
+		h2{text-align: center;line-height: 60px;}
+		a{text-decoration: none;}
+		a:visited{color: green}
+		a:hover{color: red;}
+		#fixedBar{position: fixed;top: 0;right:0; width: 20%; background-color: #ECF0F1;height: 100%;}
+		#fixedBar ul{padding-top: 40px;}
+		#fixedBar ul li {width: 100%;font-size: 18px;float: left;list-style: none;text-indent: 20px;line-height: 30px;transition: text-indent .4s;}
+		#fixedBar ul li:hover{text-indent: 30px;}
+
+		#container{width: 80%;}
+		#container ul{margin: 20px;}
+		#container ul li{list-style: none;margin-bottom: 20px;}
+		#container ul li *{margin-bottom: 3px;}
+		#container h3{border-top: 20px solid #fff;background-color: #3498ff;color: #fff;text-indent: 20px;}
+
+		pre{border: 1px solid #BDC3C7;background-color: #ddd;}
+	</style>
+</head>
+<body>
+<div id="fixedBar">
+	<ul>
+		<li><a href="#a">1、策略模式</a></li>
+		<li><a href="#b">2、代理模式</a></li>
+		<li><a href="#c">3、单例模式</a></li>
+		<li><a href="#d">4、迭代器模式</a></li>
+		<li><a href="#e">5、发布-订阅模式</a></li>
+		<li><a href="#f">6、命令模式</a></li>
+		<li><a href="#g">7、模版方法模式</a></li>
+		<li><a href="#h">8、享元模式</a></li>
+		<li><a href="#i">9、职责链模式</a></li>
+		<li><a href="#j">10、中介者模式</a></li>
+		<li><a href="#k">11、装饰者模式</a></li>
+		<li><a href="#l">12、状态模式</a></li>
+		<li><a href="#m">13、组合模式</a></li>
+	</ul>
+</div>
+
+<div id="container">
+	<h2>常用设计模式小结</h2>
+	<ul>
+		<li>前言：看<strong>曾探</strong>的《JavaScript设计模式与开发实践》所写的笔记和自己的一些理解，主要用于自己的复习。</li>
+		<li>
+			<h3>书中第一部分的一些要点</h3>
+			<p>duck typing : 鸭子类型指导我们只关注对象的行为，而不关注对象本身。</p>
+			<p>多态 : 同一操作作用域不同的对象上面，可以产生不同的解释和不同的执行结果。多态背后的思想是将“做什么”和“谁去做以及怎样去做”分离开来，也就是将“不变的事物”与“可能改变的事物”分离开来。多态的根本作用就是把过程化的条件分支语句转化为对象的多态性从而消除这些条件分支语句。</p>
+			<p>设计模式的分类 : 创建型（封装创建对象的变化）、结构型（封装对象之间的组合关系）、行为型（封装对象的行为变化）。</p>
+			<p>AOP(面向切面编程)的主要作用是把一些跟核心业务逻辑模块无关的功能抽离出来，可以保持业务逻辑模块的纯净和高内聚性，方便的复用功能性的模块。</p>
+			<p>闭包</p>
+			<p>柯里化</p>
+			<p>大量数据的分解加载</p>
+			<p>this、call、apply、bind</p>
+		</li>
+		<li>
+			<h3 id="a">1、策略模式</h3>
+			<p>定义：定义一系列的算法，把它们一个个封装起来，并且使它们可以相互替换。</p>
+			<p>目的：将算法的使用和算法的实现分离开来。</p>
+			<p>组成：第一部分是一组策略类，策略类封装了具体的算法，并负责具体的计算过程，第二部分是环境类Context，Context接受客户的请求，随后把请求委托给某一策略类。</p>
+			<p>优点：利用组合、委托和多态等技术和思想，可有效避免多重条件选择语句；易于切换、理解和扩展；可复用性高；</p>
+			<p><strong>示例：</strong></p>
+			<a href="pages/策略模式实现缓动动画.html" target="black">策略模式实现缓动动画</a>
+			<a href="pages/策略模式实现表单校验.html" target="black">策略模式实现表单校验</a>
+			<pre>
+//策略类
+var Strategy = {
+	a:function(){
+		//...
+	},
+	b:function(){
+		//...
+	},
+	c:function(){
+		//...
+	}
+};
+//环境类
+function Context(s, c){
+	//进行一些逻辑上的处理
+	//把请求委托给策略类
+	Strategy[s](c);
+}
+//执行一下
+Context('a', 'aaa');
+			</pre>
+		</li>
+		<li>
+			<h3 id="b">2、代理模式</h3>
+			<p>定义：为一个对象提供一个代用品或占位符，以便控制对他的访问。</p>
+			<p>保护代理：如果执行某项操作将会消耗很多资源，那么将想要执行这项操作的请求通过保护代理进行提交，在代理中去掉不符合的请求。</p>
+			<p>虚拟代理：虚拟代理把一些开销很大的对象，延迟到真正需要它的时候采取创建。</p>
+			<p>缓存代理：利用闭包为一些开销大的运算结果提供暂时的存储，在下次运算时，如果传递进来的参数跟之前的一致，则可以直接返回前面存储的运算结果。</p>
+			<p>**编写业务代码的时候不需要预先去猜测是否需要使用代理模式，当真正发现不方便直接访问某个对象的时候，再编写代理也不迟。</p>
+			<pre>
+//使用代理实现图片预加载时用loading进行占位的功能
+//从服务器获取到的图片数据通常就是一堆链接，因此做成下面这种形式更好用点，但是这样不能使代理和本体保持一直性，即无法相互替换
+var createImg = (function(){
+	var create = function(){
+		var img = document.createElement('img');
+		this.img = img;
+	};
+	create.prototype.setSrc = function(src){
+		this.src = src;
+	};
+	return function(){
+		return new create();
+	};
+})();
+//经过考虑，这里不可以使用闭包只声明一个img
+//如果用一个循环多次调用此函数，那么一个img的src会被不断覆盖，最后所有图片得到的都是同一张图片
+var proxyImgLoading = function(setimage, src){
+	var img = new Image();
+	setimage.src = 'loading.gif';
+	img.src = src;
+	img.onload = function(){
+		setimage.src = src;
+	};
+};
+var myimg = createImg();
+document.body.appendChild(myimg.img);
+proxyImgLoading(myimg.img, imgurl);
+			</pre>
+			<pre>
+//使用代理合并多次http请求
+//假设页面有一堆type="checkbox"的input
+var synchronousFile = function(id){
+    console.log('开始同步文件，id为：' + id);  
+};
+
+var proxySynchronous = (function(){
+    var cache = [];//缓存2s内的所有请求
+    var timer;//控制请求的发起
+    return function(id){
+        cache.push(id);
+        if(timer){
+            return;
+        }
+        //每次用户勾选之后2s才发起一次请求
+        timer = setTimeout(function(){
+            synchronousFile(cache.join(','));
+            clearTimeout( timer );
+            timer = null;
+            cache.length = 0;
+        }, 2000);
+    };
+})();
+
+var checkbox = document.getElementsByTagName('input');
+for(var i = 0, c; c = checkbox[i++]; ){
+    c.onclick = function(){
+        if(this.checked === true){
+            proxySynchronous(this.id);
+        }  
+    };
+}
+			</pre>
+			<pre>
+//高阶函数动态创建代理
+var mult = function(){//计算乘积
+    var a = 1;
+    for(var i = 0, l = arguments.length; i < l; i++){
+        a *= arguments[i];
+    }
+    return a;
+};
+
+var plus = function(){//计算加和
+    var a = 0;
+    for(var i = 0, l = arguments.length; i < l; i++){
+        a += arguments[i];
+    }
+    return a;
+};
+
+var createProxyFactory = function(fn){
+    var cache = {};
+    return function(){
+        var args = Array.prototype.join.call( arguments, ',' );
+        if(args in cache){
+            return cache[ args ];
+        }  
+        return cache[ args ] = fn.apply( this, arguments );
+    };
+};
+
+var proxyMult = createProxyFactory(mult), proxyPlus = createProxyFactory(plus);
+
+console.log(proxyMult(2,4,3,5,6));
+console.log(proxyMult(2,4,3,5,6));
+console.log(proxyPlus(2,4,3,5,6));
+console.log(proxyPlus(2,4,3,5,6));
+			</pre>
+		</li>
+		<li>
+			<h3 id="c">3、单例模式</h3>
+			<p>定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p>
+			<p>惰性单例：指在需要的时候才创建对象实例，这种技术在实际开发中非常有用。</p>
+			<p>js中的闭包让实现单例变得异常简单，单例模式简单易用，可以根据自己的使用场景创建各种变体，只要遵循只有一个实例，并提供全局访问的核心理念即可。</p>
+			<pre>
+
+//示例，一个简单的单例实现，缺点是使用者要时刻记住不要自己去new Singleton，开销是getInstance时每次都要进行判断
+var Singleton = function(a){
+	this.a = a;
+	this.instance = null;
+}
+Singleton.getInstance = function(a){
+	if(!this.instance){
+		this.instance = new Singleton(a);
+	}
+	return this.instance;
+}
+			</pre>
+			<pre>
+
+//利用闭包动态创建命名空间
+var MyApp = (function(){
+	var MyApp = {};
+	MyApp.namespace = function(name){
+		var parts = name.split('.');
+		var current = MyApp;
+		for(var i in parts){
+			if(!current[parts[i]]){
+				current[parts[i]] = {};
+			}
+			current = current[parts[i]];
+		}
+	};
+	return MyApp;
+})();
+
+MyApp.namespace('a.b');
+MyApp.namespace('c.d.e');
+			</pre>
+			<pre>
+
+//通用的惰性单例实现
+var getSingle = function( fn ) {
+	var result;
+	return function () {
+		return result || ( result = fn.apply(this, arguments) );
+	};
+};
+
+var test = function(str){
+	console.log(str);
+	return '还是这个';
+};
+
+var singleTest = getSingle(test);//将函数包装成单例函数
+
+console.log(singleTest('第一次调用'));//第一次调用 还是这个
+console.log(singleTest('第二次调用'));//还是这个
+console.log(singleTest('第三次调用'));//还是这个
+
+//第二三次调用并不会输出，因为test函数只会执行一次
+			</pre>
+		</li>
+		<li>
+			<h3 id="d">4、迭代器模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="e">5、发布-订阅模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="f">6、命令模式</h3>
+			<p>把请求封装为对象，从而分离请求的发起者和请求的接收者之间的耦合关系。</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="g">7、模版方法模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="h">8、享元模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="i">9、职责链模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="j">10、中介者模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="k">11、装饰者模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="l">12、状态模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+		<li>
+			<h3 id="m">13、组合模式</h3>
+			<p>模式的定义以及自己的理解</p>
+			<pre>function</pre>
+			<p>代码解释</p>
+		</li>
+	</ul>
+</div>
+
+</body>
+</html>
