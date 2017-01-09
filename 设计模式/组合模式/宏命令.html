@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>宏命令</title>
+</head>
+<body>
+	<input type="button" value="点击这里" id="btn">
+
+<script>
+	var MacroCommand = function(){
+		return {
+			commandsList: [],
+			add: function(command){
+				this.commandsList.push(command);
+			},
+			execute: function(){
+				for(var i = 0, command; command = this.commandsList[i++]; ){
+					command.execute();
+				}
+			}
+		};
+	};
+
+	var aCommand = {
+		execute: function(){
+			console.log('aCommand');
+		}
+	};
+
+	var b1Command = {
+		execute: function(){
+			console.log('b1Command');
+		}
+	};
+
+	var b2Command = {
+		execute: function(){
+			console.log('b2Command');
+		}
+	};
+
+	var macroCommand1 = MacroCommand();
+	macroCommand1.add(b1Command);
+	macroCommand1.add(b2Command);
+
+	var c1Command = {
+		execute: function(){
+			console.log('c1Command');
+		}
+	};
+	var c2Command = {
+		execute: function(){
+			console.log('c2Command');
+		}
+	};
+	var c3Command = {
+		execute: function(){
+			console.log('c3Command');
+		}
+	};
+	var macroCommand2 = MacroCommand();
+	macroCommand2.add(c1Command);
+	macroCommand2.add(c2Command);
+	macroCommand2.add(c3Command);
+
+	var macroCommand = MacroCommand();
+	macroCommand.add(aCommand);
+	macroCommand.add(macroCommand1);
+	macroCommand.add(macroCommand2);
+
+	var setCommand = (function(command){
+		document.getElementById('btn').onclick = function(){
+			command.execute();
+		};
+	})(macroCommand);
+</script>
+
+</body>
+</html>

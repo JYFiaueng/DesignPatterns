@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>demo</title>
+</head>
+<body>
+	
+<script>
+var imgurl = 'http://image60.360doc.com/DownloadImg/2013/04/1613/31674132_21.jpg';
+
+//这个是书上写的
+var myImage = (function(){
+	var imgNode = document.createElement('img');
+	document.body.appendChild(imgNode);
+	return {
+		setSrc: function(src){
+			imgNode.src = src;
+		}
+	};
+})();
+var proxyImage = (function(){
+	var img = new Image();
+	img.onload = function(){
+		myImage.setSrc(this.src);
+	};
+	return {
+		setSrc: function(src){
+			myImage.setSrc('loading.gif');
+			img.src = src;
+		}
+	};
+})();
+proxyImage.setSrc(imgurl);
+//这里地址是错的，主要是为了显示出loading
+
+
+
+
+var createImg = (function(){
+	var create = function(){
+		var img = document.createElement('img');
+        this.img = img;
+	};
+    create.prototype.setSrc = function(src){
+        this.src = src;
+    };
+	return function(){
+        return  new create();
+    };
+})();
+var proxyImg = (function(){
+	var img = new Image();
+	return function(setimage, src){
+		setimage.src = ('loading.gif');
+		img.src = src;
+		img.onload = function(){
+			setimage.src = this.src;
+		};
+	};
+})();
+var myimg = createImg();
+document.body.appendChild(myimg.img);
+proxyImg(myimg.img, imgurl);
+</script>
+
+</body>
+</html>

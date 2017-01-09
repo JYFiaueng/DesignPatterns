@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>对象池技术</title>
+	<style>
+		iframe{
+			width: 32%;
+			height: 600px;
+		}
+	</style>
+</head>
+<body>
+
+
+<script>
+
+var objectPoolFactory = function(createObjFn){
+	var objectPool = [];
+	return {
+		create: function(){
+			var obj = objectPool.length === 0 ? createObjFn.apply(this, arguments) : objectPool.shift();
+			return obj;
+		},
+		recover: function(obj){
+			objectPool.push(obj);
+		}
+	};
+};
+
+var iframeFactory = objectPoolFactory(function(){
+	var iframe = document.createElement('iframe');
+	document.body.appendChild(iframe);
+	iframe.onload = function(){
+		iframe.onload = null;//防止iframe重复加载的bug
+		iframeFactory.recover(iframe);//iframe加载完成之后回收节点
+	};
+	return iframe;
+});
+
+var iframe1 = iframeFactory.create();
+iframe1.src = 'https://www.baidu.com';
+
+var iframe2 = iframeFactory.create();
+iframe2.src = 'http://www.qq.com';
+
+setTimeout(function(){
+	var iframe3 = iframeFactory.create();
+	iframe3.src = 'http://jyfiaueng.github.io/welcome/';
+}, 5000);
+
+</script>
+
+</body>
+</html>
