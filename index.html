@@ -41,6 +41,7 @@
 		<li><a href="#k">11、装饰者模式</a></li>
 		<li><a href="#l">12、状态模式</a></li>
 		<li><a href="#m">13、组合模式</a></li>
+		<li><a href="#n">14、适配器模式</a></li>
 	</ul>
 </div>
 
@@ -65,6 +66,7 @@
 			<p>目的：将算法的使用和算法的实现分离开来。</p>
 			<p>组成：第一部分是一组策略类，策略类封装了具体的算法，并负责具体的计算过程，第二部分是环境类Context，Context接受客户的请求，随后把请求委托给某一策略类。</p>
 			<p>优点：利用组合、委托和多态等技术和思想，可有效避免多重条件选择语句；易于切换、理解和扩展；可复用性高；</p>
+			<p><strong>一句话：使用不同的方法实现相同的目的</strong></p>
 			<p><strong>示例：</strong></p>
 			<a href="pages/策略模式实现缓动动画.html" target="black">策略模式实现缓动动画</a>
 			<a href="pages/策略模式实现表单校验.html" target="black">策略模式实现表单校验</a>
@@ -98,6 +100,7 @@ Context('a', 'aaa');
 			<p>虚拟代理：虚拟代理把一些开销很大的对象，延迟到真正需要它的时候采取创建。</p>
 			<p>缓存代理：利用闭包为一些开销大的运算结果提供暂时的存储，在下次运算时，如果传递进来的参数跟之前的一致，则可以直接返回前面存储的运算结果。</p>
 			<p>**编写业务代码的时候不需要预先去猜测是否需要使用代理模式，当真正发现不方便直接访问某个对象的时候，再编写代理也不迟。</p>
+			<p><strong>一句话：经理让其秘书和客户见面签合同，秘书就是代理</strong></p>
 			<pre>
 //使用代理实现图片预加载时用loading进行占位的功能
 //从服务器获取到的图片数据通常就是一堆链接，因此做成下面这种形式更好用点，但是这样不能使代理和本体保持一直性，即无法相互替换
@@ -203,6 +206,7 @@ console.log(proxyPlus(2,4,3,5,6));
 			<p>定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p>
 			<p>惰性单例：指在需要的时候才创建对象实例，这种技术在实际开发中非常有用。</p>
 			<p>js中的闭包让实现单例变得异常简单，单例模式简单易用，可以根据自己的使用场景创建各种变体，只要遵循只有一个实例，并提供全局访问的核心理念即可。</p>
+			<p><strong>一句话：只存在一个的对象</strong></p>
 			<pre>
 
 //示例，一个简单的单例实现，缺点是使用者要时刻记住不要自己去new Singleton，开销是getInstance时每次都要进行判断
@@ -266,6 +270,7 @@ console.log(singleTest('第三次调用'));//还是这个
 			<h3 id="d">4、迭代器模式</h3>
 			<p>定义：提供一种方法顺序访问一个聚合对象中的各个元素，而又不需要暴露该对象的内部表示。</p>
 			<p>迭代器模式是一种相对简单的模式，简单到很多时候我们都不认为它是一种设计模式。迭代器的使用方式灵活多变，使用时要灵活变通。</p>
+			<p><strong>一句话：封装循环</strong></p>
 			<pre>
 //实现自己的迭代器
 //内部迭代器（自动迭代）
@@ -317,6 +322,7 @@ while(!iter.isDone()){
 			<p>推模型：在事件发生时，发布者一次性把所有更改的状态和数据都推送给订阅者。</p>
 			<p>拉模型：发布者仅仅通知订阅者事件已经发生了，此外发布者要提供一些公开的接口供订阅者来主动拉取数据。</p>
 			<p>发布-订阅模式在js中有很重要的作用，掌握并熟练使用发布-订阅模式对于开发者来说非常重要。</p>
+			<p><strong>一句话：自己实现一个事件处理器</strong></p>
 			<pre>
 //关于售楼处的发布订阅的例子
 var salesOffices = {};//定义售楼处
@@ -627,51 +633,415 @@ Event.create('namespace2').trigger('click', 'namespace25');
 		</li>
 		<li>
 			<h3 id="f">6、命令模式</h3>
-			<p>把请求封装为对象，从而分离请求的发起者和请求的接收者之间的耦合关系。</p>
-			<pre>function</pre>
-			<p>代码解释</p>
+			<p>定义：命令指的是一个执行某些特定事情的指令，它把请求封装为对象，从而分离请求的发起者和请求的接收者之间的耦合关系。</p>
+			<p>应用场景：需要向某些对象发送请求，但是不知道请求的接收者是谁，也不知道被请求的操作是什么，此时希望用一种松耦合的方式来设计程序，使得请求的发送者和请求的接收者能够消除彼此之间的耦合关系。</p>
+			<p>宏命令：一组命令的集合，通过执行宏命令的方式，可以一次执行一批命令。</p>
+			<strong>示例：</strong><a href="pages/命令日志.html" target="black">命令日志记录</a>
+			<p><strong>一句话：b把a的话传给c让其去执行</strong></p>
+			<pre>
+//命令模式的简单示例
+//命令的执行者和他可执行的方法，这就是厨师
+var cook = {
+	//会做两种菜
+	A:function(){},
+	B:function(){}
+};
+//服务员，接待顾客并记录顾客要吃什么
+var waiter = {
+	receive:function(p){
+		p.execute = function(){
+			cook[this.eat]();
+		};
+	}
+};
+//命令的发出者要持有命令，还要有个发出命令的方法
+//这是顾客
+function people(food){
+	this.eat = food;//这就是顾客可发出的命令
+	this.execute;
+}
+var p = new people('B');//一个新顾客
+waiter.receive(p);//接待此顾客
+p.execute();//顾客说现在开始做菜吧，这样是不是就能实现预定菜品了呢？
+			</pre>
+			<pre>
+//宏命令示例
+//下面三个是命令的执行者，每个执行者都有一个execute的执行方法
+var aCommand = {
+	execute: function(){
+		console.log('aCommand');
+	}
+};
+var bCommand = {
+	execute: function(){
+		console.log('bCommand');
+	}
+};
+var cCommand = {
+	execute: function(){
+		console.log('cCommand');
+	}
+};
+//中心处理函数
+var MacroCommand = function(){
+	return {
+		commandsList: [],
+		add: function(command){
+			this.commandsList.push(command);
+		},
+		execute: function(){
+			for(var i = 0, command; command = this.commandsList[i++]; ){
+				command.execute();
+			}
+		}
+	};
+};
+var macroCommand = MacroCommand();
+macroCommand.add(aCommand);
+macroCommand.add(bCommand);
+macroCommand.add(cCommand);
+macroCommand.execute();
+			</pre>
 		</li>
 		<li>
 			<h3 id="g">7、模版方法模式</h3>
-			<p>模式的定义以及自己的理解</p>
-			<pre>function</pre>
-			<p>代码解释</p>
+			<p>定义：模版方法模式是一种只需要使用继承就可以实现的非常简单的模版，其由抽象父类和具体的实现子类组成，通常在抽象父类中封装子类的算法框架，包括实现一些公共方法以及封装子类中所有方法的执行顺序。在模版方法模式中，子类实现中的相同部分被上移到父类中，而将不同部分留待子类来实现，这也很好的体现了泛化的思想。</p>
+			<p>使用场景：模版方法模式常被架构师用于搭建项目的框架，架构师定好了框架的骨架，程序员继承框架的结构之后，负责往里面填空。</p>
+			<p>hook：放置钩子是隔离变化的一种常见手段，我们在父类中容易变化的地方放置钩子，钩子可以有一个默认的实现，究竟要不要挂钩，这由子类自行决定。</p>
+			<p>好莱坞原则：允许底层组件将自己挂钩到高层组件中，而高层组件会决定什么时候、以何种方式去使用这些底层组件，使用模版方法模式时意味着子类放弃了对自己的控制权，而是改为父类通知子类，哪些方法应该在什么时候被调用。</p>
+			<p>模版方法模式是一种典型的通过封装变化提高系统扩展性的设计模式。</p>
+			<p><strong>一句话：使用js个性化的模拟继承和接口</strong></p>
+			<pre>
+//模版方法模式示例
+//模版方法模式就像是使用js的原型来模拟强类型面向对象中的接口和继承，同时又加入了一些js自身的语法特点
+var Beverage = function(){};
+Beverage.prototype.boilWater = function(){
+	console.log('把水煮沸');
+};
+Beverage.prototype.brew = function(){
+	throw new Error('子类必须重写brew方法');
+};
+Beverage.prototype.pourInCup = function(){
+	throw new Error('子类必须重写pourInCup方法');
+};
+Beverage.prototype.addCondiments = function(){
+	throw new Error('子类必须重写addCondiments方法');
+};
+// 子类通过这个方法控制父类是否挂钩
+Beverage.prototype.customerWantsCondiments = function(){
+	return true;
+};
+Beverage.prototype.init = function(){
+	this.boilWater();
+	this.brew();
+	this.pourInCup();
+	// 这里就是父类中容易变化的地方，就是所谓的钩子
+	if(this.customerWantsCondiments()){
+		this.addCondiments();
+	}
+};
+
+var CoffeeWithHook = function(){};
+CoffeeWithHook.prototype = new Beverage();
+CoffeeWithHook.prototype.brew = function(){
+	console.log('用沸水冲泡咖啡');
+};
+CoffeeWithHook.prototype.pourInCup = function(){
+	console.log('把咖啡倒进杯子');
+};
+CoffeeWithHook.prototype.addCondiments = function(){
+	console.log('加糖加牛奶');
+};
+CoffeeWithHook.prototype.customerWantsCondiments = function(){
+	return window.confirm('请问需要调料吗？');
+};
+
+var CoffeeWithHook = new CoffeeWithHook();
+CoffeeWithHook.init();
+			</pre>
+			<pre>
+//使用好莱坞原则进行改写的例子
+var Beverage = function(param){
+	var boilWater = function(){
+		console.log('把水煮沸');
+	};
+	var brew = param.brew || function(){
+		throw new Error('必须传递brew方法');
+	};
+	var pourInCup = param.pourInCup || function(){
+		throw new Error('必须传递pourInCup方法');
+	};
+	var addCondiments = param.addCondiments || function(){
+		throw new Error('必须传递addCondiments方法');
+	};
+	var F = function(){};
+	F.prototype.init = function(){
+		boilWater();
+		brew();
+		pourInCup();
+		addCondiments();
+	};
+	return F;
+};
+//在子类中只需要写出自己需要执行哪几步以及如何执行，具体何时执行以及执行顺序全部都由父类做决定
+var Coffee = Beverage({
+	brew: function(){
+		console.log('用沸水冲泡咖啡');
+	},
+	pourInCup: function(){
+		console.log('把咖啡倒进杯子');
+	},
+	addCondiments: function(){
+		console.log('加糖和咖啡');
+	}
+});
+
+var Tea = Beverage({
+	brew: function(){
+		console.log('用沸水冲泡茶叶');
+	},
+	pourInCup: function(){
+		console.log('把茶倒进杯子');
+	},
+	addCondiments: function(){
+		console.log('加柠檬');
+	}
+});
+
+var coffee = new Coffee();
+coffee.init();
+var tea = new Tea();
+tea.init();
+			</pre>
 		</li>
 		<li>
 			<h3 id="h">8、享元模式</h3>
-			<p>模式的定义以及自己的理解</p>
-			<pre>function</pre>
-			<p>代码解释</p>
+			<p>定义：享元模式是一种用于性能优化的模式，其核心是运用共享技术来有效支持大量细粒度的对象。</p>
+			<p>场景：如果系统中因为创建了大量类似的对象而导致内存占用过高，享元模式就非常有用了。</p>
+			<p>享元模式要求将对象的属性划分为内部状态与外部状态（状态在这里通常指属性），享元模式的目的是尽量减少共享对象的数量，下面是划分的几条经验：①内部状态存储与对象内部；②内部状态可以被一些对象共享；③内部状态独立于具体的场景，通常不会改变；④外部状态取决于具体的场景，并根据场景而变化，外部状态不能共享。</p>
+			<p>剥离了外部状态的对象称为共享对象，外部状态在必要时被传入共享对象来组装成一个完整的对象。</p>
+			<p>享元模式是一种用时间换空间的优化模式。</p>
+			<p>内部状态有多少种组合，系统中便最多存在多少个对象。</p>
+			<p>适用性：一个程序中使用大量相似对象，造成很大内存开销，对象的大多数状态都可变为外部状态。</p>
+			<p>对象池：对象池维护一个装载空闲对象的池子，如果需要对象的时候，不是直接new，而是转从对象池里获取，如果对象池里没有空闲对象，则创建一个新的对象，当获取出的对象完成它的职责之后，再进入池子等待被下次获取。例如图书馆就像是一个对象池，里面的书就是共享对象，HTTP连接池和数据库连接池也都是其代表应用。</p>
+			<p><strong>示例：</strong><a href="pages/文件上传.html" target="black">文件上传</a> <a href="pages/通用对象池.html" target="black">通用对象池</a></p>
+			<p><strong>一句话：大量重复对象只用一个，节约成本</strong></p>
+			<pre>
+//书上的示例
+//不使用享元模式，造了100个Modal
+var Modal = function(sex, underwear){
+	this.sex = sex;
+	this.underwear = underwear;
+}
+Modal.prototype.takePhoto = function(){
+	console.log(this.sex+this.underwear);
+};
+for(var i = 1; i <= 50; i++){
+	var maleModal = new Modal('male', 'underwear'+i);
+	maleModal.takePhoto();
+}
+for(var j = 1; j <= 50; j++){
+	var femaleModal = new Modal('female', 'underwear'+i);
+	femaleModal.takePhoto();
+}
+//使用享元模式，造2个Modal
+var Modal = function(sex){
+	this.sex = sex;
+}
+Modal.prototype.takePhoto = function(){
+	console.log(this.sex+this.underwear);
+};
+var maleModal = new Modal('male'), femaleModal = new Modal('female');
+for(var i = 1; i <= 50; i++){
+	maleModal.underwear = 'underwear'+i;
+	maleModal.takePhoto();
+}
+for(var j = 1; j <= 50; j++){
+	femaleModal.underwear = 'underwear'+i;
+	femaleModal.takePhoto();
+}
+			</pre>
 		</li>
 		<li>
 			<h3 id="i">9、职责链模式</h3>
 			<p>模式的定义以及自己的理解</p>
+			<p><strong>一句话：能做你就做，不能做你就找其他人做</strong></p>
 			<pre>function</pre>
 			<p>代码解释</p>
 		</li>
 		<li>
 			<h3 id="j">10、中介者模式</h3>
 			<p>模式的定义以及自己的理解</p>
+			<p><strong>一句话：回想一下马士兵联机版的坦克大战</strong></p>
 			<pre>function</pre>
 			<p>代码解释</p>
 		</li>
 		<li>
 			<h3 id="k">11、装饰者模式</h3>
 			<p>模式的定义以及自己的理解</p>
+			<p><strong>一句话：经典的After和Before函数</strong></p>
 			<pre>function</pre>
 			<p>代码解释</p>
 		</li>
 		<li>
 			<h3 id="l">12、状态模式</h3>
 			<p>模式的定义以及自己的理解</p>
+			<p><strong>一句话：状态机，清楚的了解运行步骤</strong></p>
 			<pre>function</pre>
 			<p>代码解释</p>
 		</li>
 		<li>
 			<h3 id="m">13、组合模式</h3>
-			<p>模式的定义以及自己的理解</p>
-			<pre>function</pre>
-			<p>代码解释</p>
+			<p>定义：组合模式将对象组合成树形结构，以表示部分-整体的层次结构，除了用来表示树形结构之外，组合模式的另一个好处是通过对象的多态性表现，使得用户对单个对象和组合对象的使用具有一致性。</p>
+			<p>适用场景：如果想要通过请求树的最顶层对象就实现对整颗树做统一的操作。希望统一对待树中的所有对象。</p>
+			<p>组合模式的主要目的是简化对象之间的关系和结构，统一它们的操作。组合模式不是父子关系，是一种聚合型的关系。组合模式要求对所有对象的操作要有一个一致的接口，这样才能实现树形的结构</p>
+			<p><strong>一句话：将零散的对象通过分类组成树形结构</strong></p>
+			<pre>
+//基于树形结构的组合示例
+var MacroCommand = function(){
+	return {
+		commandsList: [],
+		add: function(command){
+			this.commandsList.push(command);
+		},
+		execute: function(){
+			for(var i = 0, command; command = this.commandsList[i++]; ){
+				command.execute();
+			}
+		}
+	};
+};
+
+var aCommand = {
+	execute: function(){
+		console.log('aCommand');
+	}
+};
+
+var b1Command = {
+	execute: function(){
+		console.log('b1Command');
+	}
+};
+
+var b2Command = {
+	execute: function(){
+		console.log('b2Command');
+	}
+};
+
+var macroCommand1 = MacroCommand();
+macroCommand1.add(b1Command);
+macroCommand1.add(b2Command);
+
+var c1Command = {
+	execute: function(){
+		console.log('c1Command');
+	}
+};
+var c2Command = {
+	execute: function(){
+		console.log('c2Command');
+	}
+};
+var c3Command = {
+	execute: function(){
+		console.log('c3Command');
+	}
+};
+var macroCommand2 = MacroCommand();
+macroCommand2.add(c1Command);
+macroCommand2.add(c2Command);
+macroCommand2.add(c3Command);
+
+var macroCommand = MacroCommand();
+macroCommand.add(aCommand);
+macroCommand.add(macroCommand1);
+macroCommand.add(macroCommand2);
+macroCommand.execute();
+/*执行结果*/
+//aCommand
+//b1Command
+//b2Command
+//c1Command
+//c2Command
+//c3Command
+			</pre>
+			<pre>
+//文件夹和文件的结构化管理
+var Folder = function(name){
+	this.name = name;
+	this.parent = null;
+	this.files = [];
+};
+Folder.prototype.add = function(file){
+	file.parent = this;
+	this.files.push(file);
+};
+Folder.prototype.scan = function(){
+	console.log('开始扫描文件夹: '+this.name);
+	for(var i = 0, file, files = this.files; file = files[i++]; ){
+		file.scan();
+	}
+};
+Folder.prototype.remove = function(){
+	if(!this.parent){
+		return;
+	}
+	for(var files = this.parent.files, l = files.length - 1; l >= 0; l--){
+		var file = files[l];
+		if(file === this){
+			files.splice(l, 1);
+		}
+	}
+};
+var File = function(name){
+	this.name = name;
+	this.parent = parent;
+};
+File.prototype.add = function(){
+	throw new Error('不能添加在文件下面');
+};
+File.prototype.scan = function(){
+	console.log('开始扫描文件: '+this.name);
+};
+File.prototype.remove = function(){
+	if(!this.parent){
+		return;
+	}
+	for(var files = this.parent.files, l = files.length - 1; l >= 0; l--){
+		var file = files[l];
+		if(file === this){
+			files.splice(l, 1);
+		}
+	}
+};
+
+var folder = new Folder('学习资料');
+var folder1 = new Folder('js');
+var file1 = new Folder('深入学习nodejs');
+folder1.add(new File('js设计模式与开发实践'));
+folder.add(folder1);
+folder.add(file1);
+folder1.remove();
+folder.scan();
+/*执行结果*/
+//开始扫描文件夹: 学习资料
+//开始扫描文件夹: 深入学习nodejs
+			</pre>
+		</li>
+		<li>
+			<h3 id="n">14、适配器模式</h3>
+			<p>定义：适配器模式是一种“亡羊补牢”的模式，接口a改为了A，但又不想改动自己以前的代码，那就写一个函数a，里面封装的是A。</p>
+			<p><strong>一句话：转接口</strong></p>
+			<pre>
+//假设原先我需要通过a函数来获取数据，但是a函数并不是我编写的
+//现在编写a函数的人发神经把函数名改为了A，那我的代码就坏掉了
+//但是我又不想修改我的代码，因为我使用了大量的a函数，因此
+function a(){//这个函数就是一个适配器函数
+	A.apply(this, arguments);
+}
+			</pre>
 		</li>
 	</ul>
 </div>
