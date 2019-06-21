@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>命令日志记录</title>
+</head>
+<body>
+	<p>按F12，然后随意按wasd，再按回放，只需要一个记录栈，所执行的操作都被记录下来</p>
+	<input type="button" value="回放" id="replay">
+	<div id="msg"></div>
+<script>
+	var msg = document.getElementById('msg');
+	var Ryu = {
+		attack: function(){
+			msg.innerHTML += '攻击<br />';
+		},
+		defense: function(){
+			msg.innerHTML += '防御<br />';
+		},
+		jump: function(){
+			msg.innerHTML += '跳跃<br />';
+		},
+		crouch: function(){
+			msg.innerHTML += '蹲下<br />';
+		}
+	};
+
+	//将命令和命令对应操作连接起来组成一个函数返回
+	var makeCommand = function(receiver, state){
+		return function(){
+			receiver[ state ]();
+		};
+	};
+
+	var commands = {
+		'119': 'jump',
+		'115': 'crouch',
+		'97': 'defense',
+		'100': 'attack'
+	};
+
+	var commandStack = [];
+
+	document.onkeypress = function(e){
+		var keyCode = e.keyCode,
+			command = makeCommand(Ryu, commands[keyCode]);//根据按键值生成不同的操作函数
+
+		if(command){
+			command();
+			//将每一个操作记录下来
+			commandStack.push(command);
+		}
+	};
+
+	document.getElementById('replay').onclick = function(){
+		var command;
+		while( command = commandStack.shift() ){
+			command();
+		}
+	};
+</script>
+
+</body>
+</html>

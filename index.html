@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,user-scalable=no"> -->
+	<title>常用设计模式小结</title>
+	<style>
+		body{font-family: 'Consolas';}
+		*{margin: 0;padding: 0;}
+		h2{text-align: center;line-height: 60px;}
+		a{text-decoration: none;}
+		a:visited{color: green}
+		a:hover{color: red;}
+		#fixedBar{position: fixed;top: 0;right:0; width: 20%; background-color: #ECF0F1;height: 100%;}
+		#fixedBar ul{padding-top: 40px;}
+		#fixedBar ul li {width: 100%;font-size: 18px;float: left;list-style: none;text-indent: 20px;line-height: 30px;transition: text-indent .4s;}
+		#fixedBar ul li:hover{text-indent: 30px;}
+
+		#container{width: 80%;}
+		#container ul{margin: 20px;}
+		#container ul li{list-style: none;margin-bottom: 20px;}
+		#container ul li *{margin-bottom: 3px;}
+		#container h3{border-top: 20px solid #fff;background-color: #3498ff;color: #fff;text-indent: 20px;}
+
+		pre{border: 1px solid #BDC3C7;background-color: #ddd;}
+	</style>
+</head>
+<body>
+<div id="fixedBar">
+	<ul>
+		<li><a href="#start">书中第一部分的一些要点</a></li>
+		<li><a href="#a">1、策略模式</a></li>
+		<li><a href="#b">2、代理模式</a></li>
+		<li><a href="#c">3、单例模式</a></li>
+		<li><a href="#d">4、迭代器模式</a></li>
+		<li><a href="#e">5、发布-订阅模式</a></li>
+		<li><a href="#f">6、命令模式</a></li>
+		<li><a href="#g">7、模版方法模式</a></li>
+		<li><a href="#h">8、享元模式</a></li>
+		<li><a href="#i">9、职责链模式</a></li>
+		<li><a href="#j">10、中介者模式</a></li>
+		<li><a href="#k">11、装饰者模式</a></li>
+		<li><a href="#l">12、状态模式</a></li>
+		<li><a href="#m">13、组合模式</a></li>
+		<li><a href="#n">14、适配器模式</a></li>
+		<li><a href="#end">设计原则和编程技巧</a></li>
+	</ul>
+</div>
+
+<div id="container">
+	<h2>常用设计模式小结</h2>
+	<ul>
+		<li>前言：看<strong>曾探</strong>的《JavaScript设计模式与开发实践》所写的笔记和自己的一些理解，主要用于自己的复习。</li>
+		<li>
+			<h3 id="start">书中第一部分的一些要点</h3>
+			<p>duck typing : 鸭子类型指导我们只关注对象的行为，而不关注对象本身。</p>
+			<p>多态 : 同一操作作用域不同的对象上面，可以产生不同的解释和不同的执行结果。多态背后的思想是将“做什么”和“谁去做以及怎样去做”分离开来，也就是将“不变的事物”与“可能改变的事物”分离开来。多态的根本作用就是把过程化的条件分支语句转化为对象的多态性从而消除这些条件分支语句。</p>
+			<p>设计模式的分类 : 创建型（封装创建对象的变化）、结构型（封装对象之间的组合关系）、行为型（封装对象的行为变化）。</p>
+			<p>AOP(面向切面编程)的主要作用是把一些跟核心业务逻辑模块无关的功能抽离出来，可以保持业务逻辑模块的纯净和高内聚性，方便的复用功能性的模块。</p>
+			<p>闭包</p>
+			<p>柯里化</p>
+			<p>大量数据的分解加载</p>
+			<p>this、call、apply、bind</p>
+		</li>
+		<li>
+			<h3 id="a">1、策略模式</h3>
+			<p>定义：定义一系列的算法，把它们一个个封装起来，并且使它们可以相互替换。</p>
+			<p>目的：将算法的使用和算法的实现分离开来。</p>
+			<p>组成：第一部分是一组策略类，策略类封装了具体的算法，并负责具体的计算过程，第二部分是环境类Context，Context接受客户的请求，随后把请求委托给某一策略类。</p>
+			<p>优点：利用组合、委托和多态等技术和思想，可有效避免多重条件选择语句；易于切换、理解和扩展；可复用性高；</p>
+			<p><strong>简单点儿：使用不同的方法实现相同的目的</strong></p>
+			<p><strong>示例：</strong></p>
+			<a href="pages/策略模式实现缓动动画.html" target="black">策略模式实现缓动动画</a>
+			<a href="pages/策略模式实现表单校验.html" target="black">策略模式实现表单校验</a>
+			<pre>
+//策略类
+var Strategy = {
+	a:function(){
+		//...
+	},
+	b:function(){
+		//...
+	},
+	c:function(){
+		//...
+	}
+};
+//环境类
+function Context(s, c){
+	//进行一些逻辑上的处理
+	//把请求委托给策略类
+	Strategy[s](c);
+}
+//执行一下
+Context('a', 'aaa');
+			</pre>
+		</li>
+		<li>
+			<h3 id="b">2、代理模式</h3>
+			<p>定义：为一个对象提供一个代用品或占位符，以便控制对他的访问。</p>
+			<p>保护代理：如果执行某项操作将会消耗很多资源，那么将想要执行这项操作的请求通过保护代理进行提交，在代理中去掉不符合的请求。</p>
+			<p>虚拟代理：虚拟代理把一些开销很大的对象，延迟到真正需要它的时候采取创建。</p>
+			<p>缓存代理：利用闭包为一些开销大的运算结果提供暂时的存储，在下次运算时，如果传递进来的参数跟之前的一致，则可以直接返回前面存储的运算结果。</p>
+			<p>**编写业务代码的时候不需要预先去猜测是否需要使用代理模式，当真正发现不方便直接访问某个对象的时候，再编写代理也不迟。</p>
+			<p><strong>简单点儿：经理让其秘书和客户见面签合同，秘书就是代理</strong></p>
+			<pre>
+//使用代理实现图片预加载时用loading进行占位的功能
+//从服务器获取到的图片数据通常就是一堆链接，因此做成下面这种形式更好用点，但是这样不能使代理和本体保持一直性，即无法相互替换
+var createImg = (function(){
+	var create = function(){
+		var img = document.createElement('img');
+		this.img = img;
+	};
+	create.prototype.setSrc = function(src){
+		this.src = src;
+	};
+	return function(){
+		return new create();
+	};
+})();
+//经过考虑，这里不可以使用闭包只声明一个img
+//如果用一个循环多次调用此函数，那么一个img的src会被不断覆盖，最后所有图片得到的都是同一张图片
+var proxyImgLoading = function(setimage, src){
+	var img = new Image();
+	setimage.src = 'loading.gif';
+	img.src = src;
+	img.onload = function(){
+		setimage.src = src;
+	};
+};
+var myimg = createImg();
+document.body.appendChild(myimg.img);
+proxyImgLoading(myimg.img, imgurl);
+			</pre>
+			<pre>
+//使用代理合并多次http请求
+//假设页面有一堆type="checkbox"的input
+var synchronousFile = function(id){
+    console.log('开始同步文件，id为：' + id);  
+};
+
+var proxySynchronous = (function(){
+    var cache = [];//缓存2s内的所有请求
+    var timer;//控制请求的发起
+    return function(id){
+        cache.push(id);
+        if(timer){
+            return;
+        }
+        //每次用户勾选之后2s才发起一次请求
+        timer = setTimeout(function(){
+            synchronousFile(cache.join(','));
+            clearTimeout( timer );
+            timer = null;
+            cache.length = 0;
+        }, 2000);
+    };
+})();
+
+var checkbox = document.getElementsByTagName('input');
+for(var i = 0, c; c = checkbox[i++]; ){
+    c.onclick = function(){
+        if(this.checked === true){
+            proxySynchronous(this.id);
+        }  
+    };
+}
+			</pre>
+			<pre>
+//高阶函数动态创建代理
+var mult = function(){//计算乘积
+    var a = 1;
+    for(var i = 0, l = arguments.length; i < l; i++){
+        a *= arguments[i];
+    }
+    return a;
+};
+
+var plus = function(){//计算加和
+    var a = 0;
+    for(var i = 0, l = arguments.length; i < l; i++){
+        a += arguments[i];
+    }
+    return a;
+};
+
+var createProxyFactory = function(fn){
+    var cache = {};
+    return function(){
+        var args = Array.prototype.join.call( arguments, ',' );
+        if(args in cache){
+            return cache[ args ];
+        }  
+        return cache[ args ] = fn.apply( this, arguments );
+    };
+};
+
+var proxyMult = createProxyFactory(mult), proxyPlus = createProxyFactory(plus);
+
+console.log(proxyMult(2,4,3,5,6));
+console.log(proxyMult(2,4,3,5,6));
+console.log(proxyPlus(2,4,3,5,6));
+console.log(proxyPlus(2,4,3,5,6));
+			</pre>
+		</li>
+		<li>
+			<h3 id="c">3、单例模式</h3>
+			<p>定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p>
+			<p>惰性单例：指在需要的时候才创建对象实例，这种技术在实际开发中非常有用。</p>
+			<p>js中的闭包让实现单例变得异常简单，单例模式简单易用，可以根据自己的使用场景创建各种变体，只要遵循只有一个实例，并提供全局访问的核心理念即可。</p>
+			<p><strong>简单点儿：只存在一个的对象</strong></p>
+			<pre>
+
+//示例，一个简单的单例实现，缺点是使用者要时刻记住不要自己去new Singleton，开销是getInstance时每次都要进行判断
+var Singleton = function(a){
+	this.a = a;
+	this.instance = null;
+}
+Singleton.getInstance = function(a){
+	if(!this.instance){
+		this.instance = new Singleton(a);
+	}
+	return this.instance;
+}
+			</pre>
+			<pre>
+
+//利用闭包动态创建命名空间
+var MyApp = (function(){
+	var MyApp = {};
+	MyApp.namespace = function(name){
+		var parts = name.split('.');
+		var current = MyApp;
+		for(var i in parts){
+			if(!current[parts[i]]){
+				current[parts[i]] = {};
+			}
+			current = current[parts[i]];
+		}
+	};
+	return MyApp;
+})();
+
+MyApp.namespace('a.b');
+MyApp.namespace('c.d.e');
+			</pre>
+			<pre>
+
+//通用的惰性单例实现
+var getSingle = function( fn ) {
+	var result;
+	return function () {
+		return result || ( result = fn.apply(this, arguments) );
+	};
+};
+
+var test = function(str){
+	console.log(str);
+	return '还是这个';
+};
+
+var singleTest = getSingle(test);//将函数包装成单例函数
+
+console.log(singleTest('第一次调用'));//第一次调用 还是这个
+console.log(singleTest('第二次调用'));//还是这个
+console.log(singleTest('第三次调用'));//还是这个
+
+//第二三次调用并不会输出，因为test函数只会执行一次
+			</pre>
+		</li>
+		<li>
+			<h3 id="d">4、迭代器模式</h3>
+			<p>定义：提供一种方法顺序访问一个聚合对象中的各个元素，而又不需要暴露该对象的内部表示。</p>
+			<p>迭代器模式是一种相对简单的模式，简单到很多时候我们都不认为它是一种设计模式。迭代器的使用方式灵活多变，使用时要灵活变通。</p>
+			<p><strong>简单点儿：封装循环</strong></p>
+			<pre>
+//实现自己的迭代器
+//内部迭代器（自动迭代）
+var each = function(arr, callback){
+	for(var i = 0, len = arr.length; i < len; i++){
+		callback.call(arr[i], i, arr[ i ]);
+	}
+};
+
+each([1,2,3], function(index ,ele){
+	console.log(ele);
+});
+
+//外部迭代器（手动控制）
+var Iterator = function( obj ){
+	var current = 0;
+
+	var next = function(){
+		current += 1;
+	};
+	var isDone = function(){
+		return current >= obj.length;
+	};
+	var getCurrItem = function(){
+		return obj[ current ];
+	};
+
+	return {
+		next: next,
+		isDone: isDone,
+		getCurrItem: getCurrItem
+	};
+};
+
+var iter = Iterator([2,4,6]);
+while(!iter.isDone()){
+	console.log(iter.getCurrItem());
+	iter.next();
+}
+			</pre>
+		</li>
+		<li>
+			<h3 id="e">5、发布-订阅模式</h3>
+			<p>定义：又叫观察者模式，它定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。</p>
+			<p>在异步编程中使用发布-订阅模式，我们就无需关注对象在异步运行期间的内部状态，而只需要订阅感兴趣的事件发生点。发布订阅模式可以取代对象之间硬编码的通知机制，一个对象不用再显式的调用另外一个对象的某个接口。</p>
+			<p>实现步骤：①、指定好谁充当发布者；②、给发布者添加一个缓存列表，用于存放回调函数以便通知订阅者；③、发布消息时，发布者遍历缓存列表，依次触发里面存放的订阅者回调函数。</p>
+			<p>优点：时间上的解耦，对象之间的解耦</p>
+			<p>缺点：创建订阅这本身要消耗一定的时间和内存，当订阅了一个消息后，也许此消息最后都未发生，但这个订阅者会始终存在于内存中。</p>
+			<p>推模型：在事件发生时，发布者一次性把所有更改的状态和数据都推送给订阅者。</p>
+			<p>拉模型：发布者仅仅通知订阅者事件已经发生了，此外发布者要提供一些公开的接口供订阅者来主动拉取数据。</p>
+			<p>发布-订阅模式在js中有很重要的作用，掌握并熟练使用发布-订阅模式对于开发者来说非常重要。</p>
+			<p><strong>简单点儿：自己实现一个事件处理器</strong></p>
+			<pre>
+//关于售楼处的发布订阅的例子
+var salesOffices = {};//定义售楼处
+salesOffices.clientList = [];//缓存列表
+//添加监听
+salesOffices.listen = function(key, fn){
+	if( !this.clientList[ key ]){
+		this.clientList[ key ] = [];
+	}
+	this.clientList[ key ].push( fn );
+};
+
+salesOffices.trigger = function(){
+	//取出事件和对应的监听函数列表
+	var key = Array.prototype.shift.call( arguments ),fns = this.clientList[ key ];
+	if( !fns || fns.length === 0){//消息未被订阅过
+		return false;
+	}
+	for( var i = 0, fn; fn = fns[ i++ ]; ){
+		fn.apply( this, arguments );
+	}
+};
+
+salesOffices.listen( 'squareMeter88', function(price){
+	console.log('价格= ' + price);
+});
+salesOffices.listen( 'squareMeter110', function(price){
+	console.log('价格= ' + price);
+});
+salesOffices.trigger( 'squareMeter88', 2000000 );//价格= 2000000
+salesOffices.trigger( 'squareMeter110', 3000000 );//价格= 3000000
+			</pre>
+			<pre>
+//自己实现的一个发布-订阅处理器
+//这个处理器就相当于一个中介，订阅者不需要关心消息来自哪里，发布者不需要关心消息被推送给谁
+//对于中介来说，可以在这个处理器中实现更复杂的逻辑，比如个性化的推送、根据发布者的等级推送给不同等级的订阅者等
+var event = (function(){
+	var Events = {};//缓存订阅的事件
+	var Cache = {};//缓存发布的消息
+	var listen, trigger, remove;
+
+	listen = function (key){//支持多个回调
+		if(typeof key !== 'string') return false;
+		if(!Events[key]){
+			Events[key] = [];
+		}
+		var _key = key;
+		var fns = Events[key];//这个要放在上面，不然key就丢失了
+		Array.prototype.shift.call(arguments);//去掉key
+		//将所有的订阅回调注册在指定的订阅上
+		for(var i = 0, fn; fn = arguments[i++]; ){
+			if(typeof fn !== 'function') continue;
+			fns.push(fn);
+		}
+		//添加订阅之后立即将已经缓存过的所有消息进行推送
+		if(Cache[_key]){
+			fns = Events[_key];
+			var msgs = Cache[_key];
+			for(i = 0; fn = fns[i++]; ){
+				for(j = 0; j < msgs.length; j++){//触发时有消息
+					fn.call(this, msgs[j]);
+				}
+			}
+		}
+		return true;
+	};
+
+	trigger = function (key){//支持多条消息
+		if(typeof key !== 'string') return false;
+		var _key = key;//记录key，因为下面会丢失掉key
+		var i, j, fn;
+		Array.prototype.shift.call(arguments);
+		// 执行指定订阅上注册的所有回调
+		if(Events[_key]){
+			var fns = Events[_key];
+			for(i = 0; fn = fns[i++]; ){
+				if(arguments.length === 0) fn.call(this, '');//触发时未传消息
+				for(j = 0; j < arguments.length; j++){//触发时有消息
+					fn.call(this, arguments[j]);
+				}
+			}
+		}
+		//对消息的数据进行缓存，用于对订阅者进行立即的推送，在listen中
+		if(!Cache[_key]){
+			Cache[_key] = [];
+		}
+		for(i = 0; i < arguments.length; i++){
+			Cache[_key].push(arguments[i]);
+		}
+	};
+
+	remove = function (key){//支持移除多个回调
+		if(typeof key !== 'string') return false;
+		if(!Events[key]) return false;
+		var fns = Events[key];
+		var i, j, fn, _fn;
+		Array.prototype.shift.call(arguments);//去掉参数中的key
+		for(i = 0; fn = arguments[i++]; ){
+			for(j = 0, _fn; _fn = fns[j++]; ){
+				if(fn === _fn) fns.splice(j-1, 1);
+			}
+		}
+	};
+
+	return {
+		listen:listen,
+		trigger:trigger,
+		remove:remove
+	};
+})();
+
+// 测试监听
+event.listen('a', a1, a2);//这两个回调要分别执行
+event.trigger('a', 'a触发了', 'a又触发了');//这两个消息要分别都触发
+event.trigger('a');//没有传入消息也要触发回调
+// 测试发布
+event.trigger('b', 'b发了第一个消息', 'b发了第二个消息');//先定制好两个消息
+event.listen('b', b);//有此消息的订阅时会立即向订阅者进行推送
+// 测试移除
+event.remove('a', a1);//移除a1
+event.trigger('a', 'a触发了', 'a又触发了');
+
+function a1(m){
+	console.log(m+'1');
+}
+function a2(m){
+	console.log(m+'2');
+}
+function b(m){
+	console.log(m);
+}
+/*运行结果*/
+// a触发了1
+// a又触发了1
+// a触发了2
+// a又触发了2
+// 1
+// 2
+// b发了第一个消息
+// b发了第二个消息
+// a触发了2
+// a又触发了2
+			</pre>
+			<pre>
+//在上面的订阅器中，所有的消息都放在一个对象中，如果消息很多难免就会产生命名冲突
+//下面的代码添加了在指定的命名空间下创建事件的功能，避免了不同的机构发布同一名称的消息产生冲突的问题
+var Event = (function(){
+	var global = this,
+		Event,
+		_default = 'default';
+
+	Event = function(){
+		var _listen,
+			_trigger,
+			_remove,
+			_slice = Array.prototype.slice,
+			_shift = Array.prototype.shift,
+			_unshift = Array.prototype.unshift,
+			namespaceCache = {},
+			_create,
+			find,
+			each = function(ary, fn){
+				var ret;
+				for(var i = 0, l = ary.length; i < l; i++){
+					var n = ary[i];
+					ret = fn.call(n, i, n);
+				}
+				return ret;
+			};
+
+		_listen = function(key, fn, cache){
+			if(!cache[key]){
+				cache[key] = [];
+			}
+			cache[key].push(fn);
+		};
+
+		_remove = function(key, cache, fn){
+			if(cache[key]){
+				if(fn){
+					for(var i = cache[key].length; i >= 0; i--){
+						if(cache[key] === fn){
+							cache[key].splice(i, 1);
+						}
+					}
+				}else{
+					cache[key] = [];
+				}
+			}
+		};
+
+		_trigger = function(){
+			var cache = _shift.call(arguments),
+				key = _shift.call(arguments),
+				args = arguments,
+				_self = this,
+				ret,
+				stack = cache[key];
+
+			if(!stack || !stack.length){
+				return;
+			}
+
+			return each(stack, function(){
+				return this.apply(_self, args);
+			});
+		};
+
+		_create = function(namespace){
+			var namespace = namespace || _default;
+			var cache = {},
+				offlineStack = [],
+				ret = {
+					listen: function(key, fn, last){
+						_listen(key, fn, cache);
+						if(offlineStack === null){
+							return;
+						}
+						if(last === 'last'){
+							offlineStack.length && offlineStack.pop()();
+						}else{
+							each(offlineStack, function(){
+								this();
+							});
+						}
+						offlineStack = null;
+					},
+					one: function(key, fn, last){
+						_remove(key, cache);
+						this.listen(key, fn, last);
+					},
+					remove: function(key, fn){
+						_remove(key, cache, fn);
+					},
+					trigger: function(){
+						var fn,
+							args,
+							_self = this;
+
+						_unshift.call(arguments, cache);
+						args = arguments;
+						fn = function(){
+							return _trigger.apply(_self, args);
+						};
+						if(offlineStack){
+							return offlineStack.push(fn);
+						}
+						return fn();
+					}
+				};
+			return namespace ?
+				(namespaceCache[namespace]?
+				namespaceCache[namespace]:
+				namespaceCache[namespace]=ret):
+				ret;
+		};
+
+		return {
+			create: _create,
+			one: function(key, fn, last){
+				var event = this.create( );
+				event.one(key, fn, last);
+			},
+			remove: function(key, fn){
+				var event = this.create( );
+				event.remove(key, fn);
+			},
+			listen: function(key, fn, last){
+				var event = this.create( );
+				event.listen(key, fn, last);
+			},
+			trigger: function(){
+				var event = this.create( );
+				event.trigger.apply(this, arguments);
+			}
+		};
+	}();
+
+	return Event;
+})();
+
+// 先发布后订阅
+Event.trigger('click', 1);
+Event.listen('click', function(a){
+	console.log(a);
+});
+
+//使用命名空间
+Event.create('namespace1').listen('click', function(a){
+	console.log(a);
+});
+Event.create('namespace1').trigger('click', 'namespace1');
+Event.create('namespace2').trigger('click', 'namespace22');
+Event.create('namespace2').trigger('click', 'namespace21');
+Event.create('namespace2').trigger('click', 'namespace24');
+Event.create('namespace2').listen('click', function(a){
+	console.log(a);
+}, 'last');
+Event.create('namespace2').trigger('click', 'namespace23');
+Event.create('namespace2').trigger('click', 'namespace25');
+/*执行结果*/
+//1
+//namespace1
+//namespace24
+//namespace23
+//namespace25
+			</pre>
+		</li>
+		<li>
+			<h3 id="f">6、命令模式</h3>
+			<p>定义：命令指的是一个执行某些特定事情的指令，它把请求封装为对象，从而分离请求的发起者和请求的接收者之间的耦合关系。</p>
+			<p>应用场景：需要向某些对象发送请求，但是不知道请求的接收者是谁，也不知道被请求的操作是什么，此时希望用一种松耦合的方式来设计程序，使得请求的发送者和请求的接收者能够消除彼此之间的耦合关系。</p>
+			<p>宏命令：一组命令的集合，通过执行宏命令的方式，可以一次执行一批命令。</p>
+			<strong>示例：</strong><a href="pages/命令日志.html" target="black">命令日志记录</a>
+			<p><strong>简单点儿：b把a的话传给c让其去执行</strong></p>
+			<pre>
+//命令模式的简单示例
+//命令的执行者和他可执行的方法，这就是厨师
+var cook = {
+	//会做两种菜
+	A:function(){},
+	B:function(){}
+};
+//服务员，接待顾客并记录顾客要吃什么
+var waiter = {
+	receive:function(p){
+		p.execute = function(){
+			cook[this.eat]();
+		};
+	}
+};
+//命令的发出者要持有命令，还要有个发出命令的方法
+//这是顾客
+function people(food){
+	this.eat = food;//这就是顾客可发出的命令
+	this.execute;
+}
+var p = new people('B');//一个新顾客
+waiter.receive(p);//接待此顾客
+p.execute();//顾客说现在开始做菜吧，这样是不是就能实现预定菜品了呢？
+			</pre>
+			<pre>
+//宏命令示例
+//下面三个是命令的执行者，每个执行者都有一个execute的执行方法
+var aCommand = {
+	execute: function(){
+		console.log('aCommand');
+	}
+};
+var bCommand = {
+	execute: function(){
+		console.log('bCommand');
+	}
+};
+var cCommand = {
+	execute: function(){
+		console.log('cCommand');
+	}
+};
+//中心处理函数
+var MacroCommand = function(){
+	return {
+		commandsList: [],
+		add: function(command){
+			this.commandsList.push(command);
+		},
+		execute: function(){
+			for(var i = 0, command; command = this.commandsList[i++]; ){
+				command.execute();
+			}
+		}
+	};
+};
+var macroCommand = MacroCommand();
+macroCommand.add(aCommand);
+macroCommand.add(bCommand);
+macroCommand.add(cCommand);
+macroCommand.execute();
+			</pre>
+		</li>
+		<li>
+			<h3 id="g">7、模版方法模式</h3>
+			<p>定义：模版方法模式是一种只需要使用继承就可以实现的非常简单的模版，其由抽象父类和具体的实现子类组成，通常在抽象父类中封装子类的算法框架，包括实现一些公共方法以及封装子类中所有方法的执行顺序。在模版方法模式中，子类实现中的相同部分被上移到父类中，而将不同部分留待子类来实现，这也很好的体现了泛化的思想。</p>
+			<p>使用场景：模版方法模式常被架构师用于搭建项目的框架，架构师定好了框架的骨架，程序员继承框架的结构之后，负责往里面填空。</p>
+			<p>hook：放置钩子是隔离变化的一种常见手段，我们在父类中容易变化的地方放置钩子，钩子可以有一个默认的实现，究竟要不要挂钩，这由子类自行决定。</p>
+			<p>好莱坞原则：允许底层组件将自己挂钩到高层组件中，而高层组件会决定什么时候、以何种方式去使用这些底层组件，使用模版方法模式时意味着子类放弃了对自己的控制权，而是改为父类通知子类，哪些方法应该在什么时候被调用。</p>
+			<p>模版方法模式是一种典型的通过封装变化提高系统扩展性的设计模式。</p>
+			<p><strong>简单点儿：使用js个性化的模拟继承和接口</strong></p>
+			<pre>
+//模版方法模式示例
+//模版方法模式就像是使用js的原型来模拟强类型面向对象中的接口和继承，同时又加入了一些js自身的语法特点
+var Beverage = function(){};
+Beverage.prototype.boilWater = function(){
+	console.log('把水煮沸');
+};
+Beverage.prototype.brew = function(){
+	throw new Error('子类必须重写brew方法');
+};
+Beverage.prototype.pourInCup = function(){
+	throw new Error('子类必须重写pourInCup方法');
+};
+Beverage.prototype.addCondiments = function(){
+	throw new Error('子类必须重写addCondiments方法');
+};
+// 子类通过这个方法控制父类是否挂钩
+Beverage.prototype.customerWantsCondiments = function(){
+	return true;
+};
+Beverage.prototype.init = function(){
+	this.boilWater();
+	this.brew();
+	this.pourInCup();
+	// 这里就是父类中容易变化的地方，就是所谓的钩子
+	if(this.customerWantsCondiments()){
+		this.addCondiments();
+	}
+};
+
+var CoffeeWithHook = function(){};
+CoffeeWithHook.prototype = new Beverage();
+CoffeeWithHook.prototype.brew = function(){
+	console.log('用沸水冲泡咖啡');
+};
+CoffeeWithHook.prototype.pourInCup = function(){
+	console.log('把咖啡倒进杯子');
+};
+CoffeeWithHook.prototype.addCondiments = function(){
+	console.log('加糖加牛奶');
+};
+CoffeeWithHook.prototype.customerWantsCondiments = function(){
+	return window.confirm('请问需要调料吗？');
+};
+
+var CoffeeWithHook = new CoffeeWithHook();
+CoffeeWithHook.init();
+			</pre>
+			<pre>
+//使用好莱坞原则进行改写的例子
+var Beverage = function(param){
+	var boilWater = function(){
+		console.log('把水煮沸');
+	};
+	var brew = param.brew || function(){
+		throw new Error('必须传递brew方法');
+	};
+	var pourInCup = param.pourInCup || function(){
+		throw new Error('必须传递pourInCup方法');
+	};
+	var addCondiments = param.addCondiments || function(){
+		throw new Error('必须传递addCondiments方法');
+	};
+	var F = function(){};
+	F.prototype.init = function(){
+		boilWater();
+		brew();
+		pourInCup();
+		addCondiments();
+	};
+	return F;
+};
+//在子类中只需要写出自己需要执行哪几步以及如何执行，具体何时执行以及执行顺序全部都由父类做决定
+var Coffee = Beverage({
+	brew: function(){
+		console.log('用沸水冲泡咖啡');
+	},
+	pourInCup: function(){
+		console.log('把咖啡倒进杯子');
+	},
+	addCondiments: function(){
+		console.log('加糖和咖啡');
+	}
+});
+
+var Tea = Beverage({
+	brew: function(){
+		console.log('用沸水冲泡茶叶');
+	},
+	pourInCup: function(){
+		console.log('把茶倒进杯子');
+	},
+	addCondiments: function(){
+		console.log('加柠檬');
+	}
+});
+
+var coffee = new Coffee();
+coffee.init();
+var tea = new Tea();
+tea.init();
+			</pre>
+		</li>
+		<li>
+			<h3 id="h">8、享元模式</h3>
+			<p>定义：享元模式是一种用于性能优化的模式，其核心是运用共享技术来有效支持大量细粒度的对象。</p>
+			<p>场景：如果系统中因为创建了大量类似的对象而导致内存占用过高，享元模式就非常有用了。</p>
+			<p>享元模式要求将对象的属性划分为内部状态与外部状态（状态在这里通常指属性），享元模式的目的是尽量减少共享对象的数量，下面是划分的几条经验：①内部状态存储与对象内部；②内部状态可以被一些对象共享；③内部状态独立于具体的场景，通常不会改变；④外部状态取决于具体的场景，并根据场景而变化，外部状态不能共享。</p>
+			<p>剥离了外部状态的对象称为共享对象，外部状态在必要时被传入共享对象来组装成一个完整的对象。</p>
+			<p>享元模式是一种用时间换空间的优化模式。</p>
+			<p>内部状态有多少种组合，系统中便最多存在多少个对象。</p>
+			<p>适用性：一个程序中使用大量相似对象，造成很大内存开销，对象的大多数状态都可变为外部状态。</p>
+			<p>对象池：对象池维护一个装载空闲对象的池子，如果需要对象的时候，不是直接new，而是转从对象池里获取，如果对象池里没有空闲对象，则创建一个新的对象，当获取出的对象完成它的职责之后，再进入池子等待被下次获取。例如图书馆就像是一个对象池，里面的书就是共享对象，HTTP连接池和数据库连接池也都是其代表应用。</p>
+			<p><strong>示例：</strong><a href="pages/文件上传.html" target="black">文件上传</a> <a href="pages/通用对象池.html" target="black">通用对象池</a></p>
+			<p><strong>简单点儿：大量重复对象只用一个，节约成本</strong></p>
+			<pre>
+//书上的示例
+//不使用享元模式，造了100个Modal
+var Modal = function(sex, underwear){
+	this.sex = sex;
+	this.underwear = underwear;
+}
+Modal.prototype.takePhoto = function(){
+	console.log(this.sex+this.underwear);
+};
+for(var i = 1; i <= 50; i++){
+	var maleModal = new Modal('male', 'underwear'+i);
+	maleModal.takePhoto();
+}
+for(var j = 1; j <= 50; j++){
+	var femaleModal = new Modal('female', 'underwear'+i);
+	femaleModal.takePhoto();
+}
+//使用享元模式，造2个Modal
+var Modal = function(sex){
+	this.sex = sex;
+}
+Modal.prototype.takePhoto = function(){
+	console.log(this.sex+this.underwear);
+};
+var maleModal = new Modal('male'), femaleModal = new Modal('female');
+for(var i = 1; i <= 50; i++){
+	maleModal.underwear = 'underwear'+i;
+	maleModal.takePhoto();
+}
+for(var j = 1; j <= 50; j++){
+	femaleModal.underwear = 'underwear'+i;
+	femaleModal.takePhoto();
+}
+			</pre>
+		</li>
+		<li>
+			<h3 id="i">9、职责链模式</h3>
+			<p>定义：使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系，将这些对象连成一条链，并沿着这条链传递该请求，直到也有哦一个对象处理它为止。</p>
+			<p>优点：请求发送者只需要知道链中的起始节点，从而弱化了发送者和一组接收者之间的强联系，降低发起请求的对象和处理请求的对象之间的耦合性。</p>
+			<p>缺点：不能保证请求一定会被处理，大部分节点并没有起到实质性的作用，它们的作用仅仅是让请求传递下去，从性能方面考虑，要避免过程的职责链带来的性能损耗。</p>
+			<p><strong>简单点儿：沿着一条处理链向下走，链表</strong></p>
+			<pre>
+//示例
+var order500 = function(orderType, pay, stock){
+	if(orderType === 1 && pay === true){
+		console.log('500定金，100优惠券');
+	}else{
+		return 'nextSuccessor';
+	}
+};
+
+var order200 = function(orderType, pay, stock){
+	if(orderType === 2 && pay === true){
+		console.log('200定金，50优惠券');
+	}else{
+		return 'nextSuccessor';
+	}
+};
+
+var orderNormal = function(orderType, pay, stock){
+	if(stock > 0){
+		console.log('无优惠券');
+	}else{
+		console.log('手机库存不足');
+	}
+};
+
+var Chain = function(fn){
+	this.fn = fn;
+	this.successor = null;
+};
+
+Chain.prototype.setNextSuccessor = function(successor){
+	return this.successor = successor;
+};
+
+Chain.prototype.passRequest = function(){
+	var ret = this.fn.apply(this, arguments);
+	if(ret === 'nextSuccessor'){
+		return this.successor && this.successor.passRequest.apply(this.successor, arguments);
+	}
+	return ret;
+};
+
+Chain.prototype.next = function(){
+	return this.successor && this.successor.passRequest.apply(this.successor, arguments);
+};
+//同步返回结果
+var chainOrder500 = new Chain(order500);
+var chainOrder200 = new Chain(order200);
+var chainOrderNormal = new Chain(orderNormal);
+
+chainOrder500.setNextSuccessor(chainOrder200);
+chainOrder200.setNextSuccessor(chainOrderNormal);
+
+chainOrder500.passRequest(1, true, 500);
+chainOrder500.passRequest(2, true, 500);
+chainOrder500.passRequest(3, true, 500);
+chainOrder500.passRequest(1, false, 0);
+//异步返回结果
+var fn1 = new Chain(function(){
+	console.log(1);
+	return 'nextSuccessor';
+});
+
+var fn2 = new Chain(function(){
+	console.log(2);
+	var self = this;
+	setTimeout(function(){
+		self.next();
+	}, 3000);
+});
+
+var fn3 = new Chain(function(){
+	console.log(3);
+});
+
+fn1.setNextSuccessor(fn2).setNextSuccessor(fn3);
+fn1.passRequest();
+/*
+500定金，100优惠券
+200定金，50优惠券
+无优惠券
+手机库存不足
+1
+2
+3
+*/
+			</pre>
+		</li>
+		<li>
+			<h3 id="j">10、中介者模式</h3>
+			<p>定义：面向对象设计鼓励将行为分布到各个对象中，把对象划分成更小的粒度，有助于增强对象的可复用性，但由于这些细粒度对象之间的联系激增，又有可能反过来降低它们的可复用性。中介者模式的作用就是解除对象和对象之间的紧耦合关系，增加一个中介者对象后，所有的相关对象都通过中介者对象来通信，而不是互相引用，所以当一个对象发生改变时，只需要通知中介者对象即可。中介者模式使网状的多对多关系变成了相对简单的一对多关系。</p>
+			<p>缺点：中介者模式最大的缺点是系统中会新增一个中介者对象，因为对象之间交互的复杂性转移成了中介者对象的复杂性，使得中介者对象经常是巨大的。</p>
+			<p>使用场景：在实际项目中，模块或对象之间有一些依赖关系是正常的，一般来说，如果对象之间的复杂耦合确实导致调用和维护出现困难，而且这些耦合度随项目的变化呈指数增长曲线，那我们就可以考虑用中介者模式来重构代码。</p>
+			<p><strong>简单点儿：回想一下马士兵联机版的坦克大战</strong></p>
+			<pre>
+//一个游戏例子
+//模拟泡泡堂游戏
+//玩家原型
+function Player(name, teamColor){
+	this.name = name;
+	this.teamColor = teamColor;
+	this.state = 'alive';
+}
+
+Player.prototype.win = function(){
+	console.log(this.name + 'won');
+};
+
+Player.prototype.lose = function(){
+	console.log(this.name + 'lose');
+};
+
+Player.prototype.die = function(){
+	this.state = 'dead';
+	playerDirector.ReceiveMessage('playerDead', this);
+};
+
+Player.prototype.remove = function(){
+	playerDirector.ReceiveMessage('removePlayer', this);
+};
+
+Player.prototype.changeTeam = function(color){
+	playerDirector.ReceiveMessage('changeTeam', this, color);
+};
+
+//对象工厂
+var playerFactory = function(name, teamColor){
+	var newPlayer = new Player(name, teamColor);
+	playerDirector.ReceiveMessage('addPlayer', newPlayer);
+	return newPlayer;
+};
+
+//中介者
+var playerDirector = (function(){
+	var players = {},operations = {};//玩家列表和可进行的操作
+
+	operations.addPlayer = function(player){
+		var teamColor = player.teamColor;
+		players[teamColor] = players[teamColor] || [];
+		players[teamColor].push(player);
+	};
+
+	operations.removePlayer = function(player){
+		var teamColor = player.teamColor,
+			teamPlayers = players[teamColor] || [];
+		for(var i = teamPlayers.length - 1; i >= 0; i--){
+			if(teamPlayers[i] === player){
+				teamPlayers.splice(i, 1);
+			}
+		}
+	};
+
+	operations.changeTeam = function(player, newTeamColor){
+		operations.removePlayer(player);
+		player.teamColor = newTeamColor;
+		operations.addPlayer(player);
+	};
+
+	operations.playerDead = function(player){
+		var teamColor = player.teamColor,
+			teamPlayers = players[teamColor];
+		var all_dead = true;
+		for(var i = 0, player; player = teamPlayers[i++]; ){
+			if(player.state !== 'dead'){
+				all_dead = false;
+				break;
+			}
+		}
+		if(all_dead === true){
+			for(var i = 0, player; player = teamPlayers[i++]; ){
+				player.lose();
+			}
+			for(var color in players){
+				if(color !== teamColor){
+					var teamPlayers = players[color];
+					for(var i = 0, player; player = teamPlayers[i++]; ){
+						player.win();
+					}
+				}
+			}
+		}
+	};
+
+	var ReceiveMessage = function(){
+		var message = Array.prototype.shift.call(arguments);
+		operations[message].apply(this, arguments);
+	};
+
+	return {
+		ReceiveMessage: ReceiveMessage
+	};
+
+})();
+
+var player1 = playerFactory('1号玩家', 'red');
+var player2 = playerFactory('2号玩家', 'red');
+var player3 = playerFactory('3号玩家', 'red');
+var player4 = playerFactory('4号玩家', 'red');
+var player5 = playerFactory('5号玩家', 'blue');
+var player6 = playerFactory('6号玩家', 'blue');
+var player7 = playerFactory('7号玩家', 'blue');
+var player8 = playerFactory('8号玩家', 'blue');
+player1.changeTeam('blue');
+player2.die();
+player3.die();
+player4.die();
+/*
+2号玩家lose
+3号玩家lose
+4号玩家lose
+5号玩家won
+6号玩家won
+7号玩家won
+8号玩家won
+1号玩家won
+*/
+			</pre>
+		</li>
+		<li>
+			<h3 id="k">11、装饰者模式</h3>
+			<p>定义：可以动态的给某个对象添加一些额外的职责，而不会影响从这个类中派生的其他对象</p>
+			<p>装饰者模式将一个对象嵌入到另一个对象之中，实际上相当于一个对象被另一个对象包装起来，形成一条包装链，请求随着这条链一次传递到所有的对象，每个对象都有处理这条请求的机会。</p>
+			<p>代理模式和装饰者模式最重要的区别在于它们的意图和设计模式，代理模式的目的是当直接访问本体不方便或不符合需求时，为这个本体提供一个替代者，本体定义了关键功能，而代理提供或拒绝对他的访问，或者在访问本体之间做一些额外的事情，装饰者模式的作用是在不方便或者不能直接修改对象的情况下，为对象动态的加入行为。</p>
+			<p>代理模式强调一种关系，这种关系可以静态表达，也就是说这种关系在一开始就是确定的，而装饰者模式用于一开始不能确定对象的全部功能时，先实现其重要功能，然后使用装饰器在其上添加更多的功能。</p>
+			<p><strong>简单点儿：经典的After和Before函数</strong></p>
+			<pre>
+//简单示例，一条包装链
+var plane = {
+	fire:function(){
+		console.log('plane');
+	}
+}
+var Aplane = function(){
+	console.log('Aplane');
+}
+var Bplane = function(){
+	console.log('Bplane');
+}
+var f1 = plane.fire;
+plane.fire = function(){
+	f1();
+	Aplane();
+}
+var f2 = plane.fire;
+plane.fire = function(){
+	f2();
+	Bplane();
+}
+plane.fire();
+//plane
+//Aplane
+//Bplane
+			</pre>
+			<pre>
+//用AOP装饰函数在实际开发中非常有用
+//我们可以把行为依照职责分成粒度更细的函数，然后通过装饰把它们合并到一起，这有助于我们编写一个松耦合和高复用性的系统
+//前<b>
+Function.prototype.before = function(beforefn){
+	var _self = this;//保存原函数的引用
+	return function(){//返回包含了原函数和新函数的代理函数
+		beforefn.apply(this, arguments);//执行新函数，且保证this不被劫持
+		return _self.apply(this, arguments);//执行原函数并返回原函数的执行结果
+	};
+};</b>
+//后<b>
+Function.prototype.after = function(afterfn){
+	var _self = this;
+	return function(){
+		var ret = _self.apply(this, arguments);
+		afterfn.apply(this, arguments);
+		return ret;
+	};
+};</b>
+//返回的代理函数只是保证新函数和原函数的执行顺序，并不是真正的代理函数
+
+//执行顺序的研究
+var a = function(){
+	console.log('a');
+};
+var ret = a.before(function(){
+	console.log('b');
+}).after(function(){
+	console.log('c');
+}).before(function(){
+	console.log('d');
+});
+ret();//输出是d、b、a、c
+
+//动态改变参数，在一个函数执行之前为其添加一些参数
+var func = function(param){
+	console.log(param);
+};
+func = func.before(function(param){
+	param.b = 'b';
+});
+func({a: 'a'});
+			</pre>
+		</li>
+		<li>
+			<h3 id="l">12、状态模式</h3>
+			<p>定义：状态模式是一种非同寻常的优秀模式，它也许是解决某些需求场景的最好方法，状态模式的关键是区分事物内部的状态，事物内部状态的改变往往会带来事物的行为改变。</p>
+			<p>状态模式的<b>关键</b>是把事物的每种状态都封装成单独的类，跟此状态有关的行为都被封装在这个类的内部，同时还可以把状态的切换规则事先分布在状态类中，这样就有效的消除了原本存在的大量条件分支语句。</p>
+			<p>GoF定义：允许一个对象在其内部状态改变时改变它的行为，对象看起来似乎修改了它的类。</p>
+			<p>对上面这句话的解析：前一句的意思是将状态封装成独立的类，并将请求委托给当前的状态对象，当对象的内部状态改变时，会带来不同的行为变化。后一句是从客户的角度来看，我们使用的对象，在不同的状态下具有截然不同的行为，这个对象看起来是从不同的类中实例化而来的，实际上这是使用了委托的效果。</p>
+			<b>优点：</b>
+			<p>&nbsp;&nbsp;状态模式定义了状态与行为之间的关系，并将它们封装在一个类里，通过增加新的状态类，很容易增加新的状态和转换。</p>
+			<p>&nbsp;&nbsp;避免context无限膨胀，状态的切换的逻辑被分布在状态类中，也去掉了context中原本过多的条件分支。</p>
+			<p>&nbsp;&nbsp;用对象代理字符串来记录当前状态，使得状态的切换更加一目了然。</p>
+			<p>&nbsp;&nbsp;context中的请求动作和状态类中封装的行为可以非常独立的变化而互不影响。</p>
+			<b>缺点：</b>
+			<p>&nbsp;&nbsp;会在系统中定义许多状态类，由于逻辑分散在状态类中，虽然避开了不受欢迎的条件分支语句，但也造成了逻辑分散的问题，我们无法在一个地方就看出整个状态机的逻辑。</p>
+			<p>策略模式和状态模式的<b>相同点</b>是都有一个上下文、一些策略或状态类，上下文把请求委托给这些类来执行。<b>区别</b>是策略模式中的各个策略类之间是平等又平行的，它们之间没有任何联系，所以客户必须熟知这些策略类的作用，以便客户可以随时主动切换算法，而在状态模式中，状态和状态对应的行为是早已被封装好的，状态之间的切换也早被规定完成，‘改变行为’这件事情发生在状态模式内部，对客户来说，并不需要了解这些细节，这正是状态模式的作用所在。</p>
+			<p><b>通过状态模式重构代码之后，很多杂乱无章的代码会变得清晰，虽然状态模式一开始并不是非常容易理解，但我们有必要去好好掌握这种设计模式。</b></p>
+			<p>示例：
+				<a href="pages/电灯栗子.html" target="black">电灯例子</a>
+				<a href="pages/文件上传栗子.html" target="black">文件上传例子</a>
+				<a href="pages/js版状态机.html" target="black">两种形式的状态机</a>
+			</p>
+			<p><strong>简单点儿：这个简单不了啊</strong></p>
+			<pre>
+//电灯的例子
+var OffLightState = function(light){
+	this.light = light;
+};
+OffLightState.prototype.buttonWasPressed = function(){
+	console.log('弱光');
+	this.light.setState(this.light.weakLightState);
+};
+
+var WeakLightState = function(light){
+	this.light = light;
+};
+WeakLightState.prototype.buttonWasPressed = function(){
+	console.log('强光');
+	this.light.setState(this.light.strongLightState);
+};
+
+var StrongLightState = function(light){
+	this.light = light;
+};
+StrongLightState.prototype.buttonWasPressed = function(){
+	console.log('超强光');
+	this.light.setState(this.light.superStrongLightState);
+};
+
+var SuperStrongLightState = function(light){
+	this.light = light;
+};
+SuperStrongLightState.prototype.buttonWasPressed = function(){
+	console.log('关灯');
+	this.light.setState(this.light.offLightState);
+};
+
+var Light = function(){
+	this.offLightState = new OffLightState(this);
+	this.weakLightState = new WeakLightState(this);
+	this.strongLightState = new StrongLightState(this);
+	this.superStrongLightState = new SuperStrongLightState(this);
+	this.button = null;
+};
+Light.prototype.init = function(){
+	var button = document.createElement('button');
+	var self = this;
+	this.button = document.body.appendChild(button);
+	this.button.innerHTML = '开关';
+	this.currState = this.offLightState;
+	this.button.onclick = function(){
+		self.currState.buttonWasPressed();
+	};
+};
+Light.prototype.setState = function(newState){
+	this.currState = newState;
+};
+
+var light = new Light();
+light.init();
+			</pre>
+			<p>有限状态机可以模拟世界上大部分事物，其特征是：①、状态总数是有限的；②、任一时刻只处在一种状态之中；③、某种条件下会从一种状态转变到另一种状态；</p>
+			<p>对于js来说，很多对象可以写成有限状态机，由于js的异步操作很多，当异步操作结束时，发生相应的状态改变，由此再触发其他操作，将异步操作与对象的状态挂钩。</p>
+			<p>基于表驱动的有限状态机：在一个表格中规定好状态之间的转换关系，库JS Finite State Machine封装好了API，可以很轻易的实现状态机代码。</p>
+		</li>
+		<li>
+			<h3 id="m">13、组合模式</h3>
+			<p>定义：组合模式将对象组合成树形结构，以表示部分-整体的层次结构，除了用来表示树形结构之外，组合模式的另一个好处是通过对象的多态性表现，使得用户对单个对象和组合对象的使用具有一致性。</p>
+			<p>适用场景：如果想要通过请求树的最顶层对象就实现对整颗树做统一的操作。希望统一对待树中的所有对象。</p>
+			<p>组合模式的主要目的是简化对象之间的关系和结构，统一它们的操作。组合模式不是父子关系，是一种聚合型的关系。组合模式要求对所有对象的操作要有一个一致的接口，这样才能实现树形的结构</p>
+			<p><strong>简单点儿：将零散的对象通过分类组成树形结构</strong></p>
+			<pre>
+//基于树形结构的组合示例
+var MacroCommand = function(){
+	return {
+		commandsList: [],
+		add: function(command){
+			this.commandsList.push(command);
+		},
+		execute: function(){
+			for(var i = 0, command; command = this.commandsList[i++]; ){
+				command.execute();
+			}
+		}
+	};
+};
+
+var aCommand = {
+	execute: function(){
+		console.log('aCommand');
+	}
+};
+
+var b1Command = {
+	execute: function(){
+		console.log('b1Command');
+	}
+};
+
+var b2Command = {
+	execute: function(){
+		console.log('b2Command');
+	}
+};
+
+var macroCommand1 = MacroCommand();
+macroCommand1.add(b1Command);
+macroCommand1.add(b2Command);
+
+var c1Command = {
+	execute: function(){
+		console.log('c1Command');
+	}
+};
+var c2Command = {
+	execute: function(){
+		console.log('c2Command');
+	}
+};
+var c3Command = {
+	execute: function(){
+		console.log('c3Command');
+	}
+};
+var macroCommand2 = MacroCommand();
+macroCommand2.add(c1Command);
+macroCommand2.add(c2Command);
+macroCommand2.add(c3Command);
+
+var macroCommand = MacroCommand();
+macroCommand.add(aCommand);
+macroCommand.add(macroCommand1);
+macroCommand.add(macroCommand2);
+macroCommand.execute();
+/*执行结果*/
+//aCommand
+//b1Command
+//b2Command
+//c1Command
+//c2Command
+//c3Command
+			</pre>
+			<pre>
+//文件夹和文件的结构化管理
+var Folder = function(name){
+	this.name = name;
+	this.parent = null;
+	this.files = [];
+};
+Folder.prototype.add = function(file){
+	file.parent = this;
+	this.files.push(file);
+};
+Folder.prototype.scan = function(){
+	console.log('开始扫描文件夹: '+this.name);
+	for(var i = 0, file, files = this.files; file = files[i++]; ){
+		file.scan();
+	}
+};
+Folder.prototype.remove = function(){
+	if(!this.parent){
+		return;
+	}
+	for(var files = this.parent.files, l = files.length - 1; l >= 0; l--){
+		var file = files[l];
+		if(file === this){
+			files.splice(l, 1);
+		}
+	}
+};
+var File = function(name){
+	this.name = name;
+	this.parent = parent;
+};
+File.prototype.add = function(){
+	throw new Error('不能添加在文件下面');
+};
+File.prototype.scan = function(){
+	console.log('开始扫描文件: '+this.name);
+};
+File.prototype.remove = function(){
+	if(!this.parent){
+		return;
+	}
+	for(var files = this.parent.files, l = files.length - 1; l >= 0; l--){
+		var file = files[l];
+		if(file === this){
+			files.splice(l, 1);
+		}
+	}
+};
+
+var folder = new Folder('学习资料');
+var folder1 = new Folder('js');
+var file1 = new Folder('深入学习nodejs');
+folder1.add(new File('js设计模式与开发实践'));
+folder.add(folder1);
+folder.add(file1);
+folder1.remove();
+folder.scan();
+/*执行结果*/
+//开始扫描文件夹: 学习资料
+//开始扫描文件夹: 深入学习nodejs
+			</pre>
+		</li>
+		<li>
+			<h3 id="n">14、适配器模式</h3>
+			<p>定义：适配器模式是一种“亡羊补牢”的模式，接口a改为了A，但又不想改动自己以前的代码，那就写一个函数a，里面封装的是A。</p>
+			<p><strong>简单点儿：转接口</strong></p>
+			<pre>
+//假设原先我需要通过a函数来获取数据，但是a函数并不是我编写的
+//现在编写a函数的人发神经把函数名改为了A，那我的代码就坏掉了
+//但是我又不想修改我的代码，因为我使用了大量的a函数，因此
+function a(){//这个函数就是一个适配器函数
+	A.apply(this, arguments);
+}
+			</pre>
+		</li>
+		<li>
+			<h3 id="end">第三部分 设计原则和编程技巧</h3>
+			<b>单一职责原则（SRP）</b>
+			<p>就一个类、对象或方法而言，应该仅有一个引起他变化的原因。</p>
+			<p>SRP的职责被定义为引起变化的原因，每个职责都是变化的一个轴线，如果一个方法承担了过多的职责，那么在需求的变迁过程中，需要改写这个方法的可能性就越大，这样的方法通常是一个不稳定的方法。</p>
+			<p>对于总是同时变化的职责不必要分离他们，对于很少发生改变的职责在需要分离的时候再去分离。</p>
+			<p>在人的常规思维中，总是习惯性的把一组相关的行为放在一起，如何正确的分离职责不是一件容易的事。</p>
+			<p>SRP原则的优点是降低了单个类或者对象的复杂度，按照职责把对象分解成更小的粒度。</p>
+			<p>功能更细意味着对象越分散越多，需要寻找到这之间一个最优的平衡点。</p>
+			<p>代表：代理模式、迭代器模式、单例模式、装饰者模式</p>
+			<b>最少知识原则（LKP）</b>
+			<p>LKP说的是一个软件实体应当尽可能少地与其他实体发生相互作用。如果两个对象之间不必彼此直接通信，那么这两个对象就不要发生直接的相互联系，常见的做法是引入一个第三者对象来承担这些对象之间的通信作用。</p>
+			<p>代表：中介者模式、外观模式（关键是定义一个高层接口去封装一组子系统）</p>
+			<b>开放-封闭原则（OCP）</b>
+			<p>定义：软件实体（类、函数、模块）等应该是可以扩展的，但是不可修改。</p>
+			<p>过多的条件分支语句是造成程序违反开放-封闭原则的一个常见原因。</p>
+			<p>当我们遇到一大片if或switch语句时，第一时间就应该考虑，能否利用对象的多态性来重构他们。</p>
+			<p>找出程序中将要变化的地方，把变化封装起来，是让代码准许开闭原则的重要途径，下面是两种分离变化的方式：</p>
+			<p>①、放置挂钩是分离变化的一种方式，我们在程序有可能变化的地方放置一个挂钩，挂钩的返回结果决定了程序的下一步走向。</p>
+			<p>②、回调函数是一种特殊的挂钩，我们可以把一部分易于变化的逻辑封装在回调函数里，然后把回调函数当作参数传入一个稳定和封闭的函数中，当回调函数被执行的时候，程序就可以因为回调函数的内部逻辑的不同而产生不同的结果。</p>
+			<p>代表：发布-订阅模式、模版方法模式、策略模式、代理模式、职责链模式</p>
+			<b>代码重构</b>
+			<p>避免出现超大函数</p>
+			<p>分离出可用于复用的函数</p>
+			<p>函数要有良好的命名</p>
+			<p>避免复杂的条件分支语句，提炼为函数</p>
+			<p>灵活的使用循环</p>
+			<p>使用return提前退出函数，不去执行不必要的部分</p>
+			<p>避免过长的参数列表</p>
+		</li>
+	</ul>
+</div>
+
+</body>
+</html>
